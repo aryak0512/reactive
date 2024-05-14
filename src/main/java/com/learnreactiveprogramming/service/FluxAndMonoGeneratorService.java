@@ -3,7 +3,9 @@ package com.learnreactiveprogramming.service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -89,5 +91,34 @@ public class FluxAndMonoGeneratorService {
         return Flux.fromArray(chars);
     }
 
+    /**
+     * depicts the asynchronous nature of flatMap
+     */
+    public Flux<String> getFluxWithFlatMapAsync() {
+
+        Flux<String> namesFlux = Flux.just("Jim", "John", "Alex");
+        int delay = new Random().nextInt(1000);
+        return namesFlux
+                .filter(name -> name.length() > 3)
+                .map(String::toUpperCase)
+                // the flux being provided to flatmap is unordered, since flatmap is async, it does not care about order
+                .flatMap(s -> Flux.fromArray(s.split("")).delayElements(Duration.ofMillis(delay)))
+                .log();
+    }
+
+    /**
+     * depicts the synchronous nature of concatMap
+     */
+    public Flux<String> getFluxWithConcatMap() {
+
+        Flux<String> namesFlux = Flux.just("Jim", "John", "Alex");
+        int delay = new Random().nextInt(1000);
+        return namesFlux
+                .filter(name -> name.length() > 3)
+                .map(String::toUpperCase)
+                // the flux being provided to concatMap is unordered, since concatMap is sync, it preserves the order
+                .concatMap(s -> Flux.fromArray(s.split("")).delayElements(Duration.ofMillis(delay)))
+                .log();
+    }
 
 }

@@ -123,4 +123,28 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("A", "L","E","X")
                 .verifyComplete();
     }
+
+    @Test
+    void testGetFluxWithFlatMapAsync() {
+        FluxAndMonoGeneratorService obj = new FluxAndMonoGeneratorService();
+        // given
+        Flux<String> flux = obj.getFluxWithFlatMapAsync();
+        // when
+        StepVerifier.create(flux)
+                .expectNextCount(8)
+                //.expectNext("J","O","H","N","A", "L","E","X")
+                .verifyComplete();
+    }
+
+    @Test
+    void testGetFluxWithConcatMap() {
+        FluxAndMonoGeneratorService obj = new FluxAndMonoGeneratorService();
+        // given
+        Flux<String> flux = obj.getFluxWithConcatMap();
+        // when
+        StepVerifier.create(flux)
+                .expectNext("J","O","H","N","A", "L","E","X")
+                .verifyComplete();
+    }
+
 }
